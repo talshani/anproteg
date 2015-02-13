@@ -1,0 +1,18 @@
+
+apply plugin: 'com.github.johnrengelman.shadow'
+
+dependencies {
+    compile 'com.google.auto:auto-common:0.3'
+    compile 'com.google.auto.value:auto-value:1.0'
+    compile 'org.apache.commons:commons-lang3:3.3.2'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'com.google.testing.compile', name: 'compile-testing', version: '0.5'
+}
+
+shadowJar {
+    relocate 'com.google', 'com.github.talshani.anproteg.repackaged.com.google'
+    relocate 'org.apache', 'com.github.talshani.anproteg.repackaged.org.apache'
+    dependencies {
+        exclude(dependency('com.google.auto.value:auto-value'))
+    }
+}

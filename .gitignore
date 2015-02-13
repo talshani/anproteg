@@ -1,5 +1,11 @@
 .gradle
 build/
+**/src/generated/java/
+libs/
 
 # Ignore Gradle GUI config
 gradle-app.setting
+
+
+.idea
+*.iml

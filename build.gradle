@@ -1,0 +1,93 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+//        classpath 'com.netflix.nebula:gradle-extra-configurations-plugin:1.12.+'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
+    }
+}
+
+version = '0.0.1'
+
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'idea'
+//    apply plugin: 'provided-base'
+    apply plugin: 'maven-publish'
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
+
+    configurations {
+        generated
+    }
+    sourceSets {
+        generated {
+            java.srcDir "${projectDir}/src/generated/java"
+        }
+        main {
+            runtimeClasspath += sourceSets.generated.output
+        }
+    }
+//
+    task generateCode(type: JavaCompile, group: 'build', description: 'Generates annotated code') {
+        source = sourceSets.main.java
+        classpath = configurations.compile // add processor module to classpath
+        // specify javac arguments
+        options.compilerArgs = [
+                "-proc:only",
+                "-sourcepath", [file("src/main/java/").toString(), file("src/main/resources/").toString()].join(";"),
+                "-s", file("src/generated/java").toString(),
+        ]
+        // specify output of generated code
+        destinationDir = file("src/generated/java");
+    }
+//    compileJava.dependsOn(generateCode)
+
+//    compileGeneratedJava.options.compilerArgs = [
+//            "-proc:only",
+//            "-sourcepath", [file("src/main/java/").toString(), file("src/main/resources/").toString()].join(";"),
+//            "-s", file("generated").toString(), "-Adebug",
+//    ];
+//    compileGeneratedJava.destinationDir = file("generated");
+
+//    compileJava.dependsOn(compileGeneratedJava)
+//    dependencies {
+//        compile project(path: project.path, configuration: "generated")
+//        compile project(path: project.path, configuration: "generatedCompile")
+//    }
+//    project.afterEvaluate {
+//        dependencies {
+//            configurations.generated.allDependencies.each {
+//                compile it
+//                generatedCompile it
+//            }
+//        }
+//    }
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            url "http://repository.jetbrains.com/all"
+        }
+    }
+
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.11'
+//        compile 'com.google.auto.value:auto-value:1.0-rc1'
+    }
+
+    idea {
+        module {
+            generatedSourceDirs += file("src/generated/java")
+        }
+    }
+}
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.2'
+}

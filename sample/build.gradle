@@ -1,0 +1,12 @@
+
+dependencies {
+//    compile project(':annotation-processor')
+    compile fileTree(dir: 'libs', include: '*.jar')
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task copyProcessorLocally(type:Copy) {
+    from project(':annotation-processor').file('build/libs/annotation-processor-all.jar')
+    into 'libs'
+}
+copyProcessorLocally.dependsOn ':annotation-processor:shadowJar'
